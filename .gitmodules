@@ -1,0 +1,6 @@
+[submodule "chunkie"]
+	path = chunkie
+	url = https://github.com/fastalgorithms/chunkie
+[submodule "fmm3dbie"]
+	path = fmm3dbie
+	url = https://github.com/fastalgorithms/fmm3dbie
