@@ -4,3 +4,12 @@
 [submodule "fmm3dbie"]
 	path = fmm3dbie
 	url = https://github.com/fastalgorithms/fmm3dbie
+[submodule "sommerfeld"]
+	path = sommerfeld
+	url = https://github.com/flatironinstitute/sommerfeld
+[submodule "finufft"]
+	path = finufft
+	url = https://github.com/flatironinstitute/finufft
+[submodule "surfacefun"]
+	path = surfacefun
+	url = https://github.com/danfortunato/surfacefun

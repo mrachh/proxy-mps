@@ -24,6 +24,33 @@ if isfield(opts, 'testfmm')
 end
 
 
+sommerfeldremex = false;
+if isfield(opts, 'sommerfeldremex')
+    sommerfeldremex = opts.sommerfeldremex;
+end
+
+sommerfeldrecompile = false;
+if isfield(opts, 'sommerfeldrecompile')
+    sommerfeldrecompile = opts.sommerfeldrecompile;
+end
+
+sommerfeldremex = or(sommerfeldremex, sommerfeldrecompile);
+addpath ./src/
+
+
+finufftremex = false;
+if isfield(opts, 'finufftremex')
+    finufftremex = opts.finufftremex;
+end
+
+finufftrecompile = false;
+if isfield(opts, 'finufftrecompile')
+    finufftrecompile = opts.finufftrecompile;
+end
+
+finufftremex = or(finufftremex, finufftrecompile);
+
+
 
 % run the chunkie part of the startup
 if (exist('./chunkie/startup.m', 'file'))
@@ -67,9 +94,9 @@ if(exist('./fmm3dbie/matlab/startup.m','file'))
                 testfmm = true; % test if new install
 
             else    
-                msg = "CHUNKIE STARTUP: unable to find a suitable compiler for FMM2D. " + ...
+                msg = "PROXY-MPS STARTUP: unable to find a suitable compiler for fmm3dbie. " + ...
                     "See manual install instructions on github";
-                warning('CHUNKIESTARTUP:compilerwarn',msg)
+                warning('PROXYMPSSTARTUP:compilerwarn',msg)
             end
         end
     end
@@ -115,9 +142,9 @@ if(exist('./fmm3dbie/FMM3D/matlab','dir'))
                 testfmm = true; % test if new install
 
             else    
-                msg = "CHUNKIE STARTUP: unable to find a suitable compiler for FMM2D. " + ...
+                msg = "PROXY-MPS STARTUP: unable to find a suitable compiler for FMM3D. " + ...
                     "See manual install instructions on github";
-                warning('CHUNKIESTARTUP:compilerwarn',msg)
+                warning('PROXYMPSSTARTUP:compilerwarn',msg)
             end
         end
     end
@@ -128,4 +155,83 @@ if(exist('./fmm3dbie/FMM3D/matlab','dir'))
         runtests
         cd ../../..;
     end
+end
+
+
+% 
+% run the sommerfeld part of the startup
+if(exist('./sommerfeld/matlab','dir'))
+    addpath ./sommerfeld/matlab;
+    cd './sommerfeld'
+    icheck = exist(['somm2drouts.' mexext], 'file');
+    if icheck ~=3 || sommerfeldremex || sommerfeldrecompile
+        if ismac || isunix
+            [status,cmdout] = system('which gfortran');
+            if(~status)
+                fprintf('------- proxy-mps startup: building sommerfeld ----- \n');
+                fprintf('fortran compiler found at: %s\n',cmdout);
+                path1 = getenv('PATH');
+                cmdout2 = extractBefore(cmdout, 'gfortran');
+                path1 = [path1 cmdout2];
+                setenv('PATH', path1);
+                if ismac
+                    [~, result] = system('uname -m');
+                    if strcmpi(strtrim(result), 'x86_64')
+                        !cp -f make.inc.macos.gnu make.inc;
+                    else
+                        !cp -f make.inc.macos_arm64.gnu make.inc;
+                    end
+                end
+                if sommerfeldrecompile
+                    !make clean
+                end
+                !make matlab; 
+            else    
+                msg = "PROXY-MPS STARTUP: unable to find a suitable compiler for sommerfeld. " + ...
+                    "See manual install instructions on github";
+                warning('PROXYMPSSTARTUP:compilerwarn',msg)
+            end
+        end
+    end
+    cd ../
+end
+
+
+% run the finufft part of the startup
+if(exist('./finufft/matlab','dir'))
+    addpath ./finufft/matlab;
+    cd './finufft'
+    icheck = exist(['finufft.' mexext], 'file');
+    if icheck ~=3 || finufftremex || finufftrecompile
+        if ismac || isunix
+            [status,cmdout] = system('which gfortran');
+            if(~status)
+                fprintf('------- proxy-mps startup: building finufft ----- \n');
+                fprintf('fortran compiler found at: %s\n',cmdout);
+                path1 = getenv('PATH');
+                cmdout2 = extractBefore(cmdout, 'gfortran');
+                path1 = [path1 cmdout2];
+                setenv('PATH', path1);
+                if ismac
+                    !cp -f make.inc.macosx_clang_matlab make.inc;
+                end
+                if finufftrecompile
+                    !make clean
+                end
+                !make matlab; 
+            else    
+                msg = "PROXY-MPS STARTUP: unable to find a suitable compiler for finufft. " + ...
+                    "See manual install instructions on github";
+                warning('PROXYMPSSTARTUP:compilerwarn',msg)
+            end
+        end
+    end
+    cd ../
+end
+
+
+if(exist('./surfacefun','dir'))
+  cd surfacefun
+  run setup.m
+  cd ..
 end
