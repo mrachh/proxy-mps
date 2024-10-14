@@ -1,3 +1,7 @@
 *.asv
 fort.*
 *int2*
+*DS_STORE*
+*.mat
+*.jpg
+*.pdf
