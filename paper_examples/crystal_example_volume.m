@@ -14,7 +14,7 @@ x = -1:hx:1;
 y = -1:hy:1;
 
 fsave = ['result_mscat_volume_Nx' num2str(Nx) '_Ny' num2str(Ny) ...
-      '_zk6piNx_gau_ref0_nref4.mat'];
+      '_zk6piNy_ref0.mat'];
 
 a = hx/3;% this means the separation is hx/3
 b = hy/3;% this means the separation is hy/3
@@ -25,7 +25,7 @@ shift=[0,0];
 foscx = @(x,y,c) 0.1*cos(3*(x-c(1))./a/2*pi) + 0.5*cos(10*(x-c(1))./a/2*pi) + sin(17*(x-c(1))./a/2*pi);
 foscy = @(x,y,c) 0.1*sin(2*(y-c(2))./b/2*pi) + 0.5*cos(9*(y-c(2))./b/2*pi) + sin(19*(y-c(2))./b/2*pi);
 
-qfun1 = @(x,y,c) -(2 + foscx(x,y,c).*foscy(x,y,c)).*exp(-50*((x-c(1)).^2/4/a.^2+ (y-c(2)).^2/4/b.^2));
+qfun1 = @(x,y,c) -(2 + foscx(x,y,c).*foscy(x,y,c)).*exp(-100*((x-c(1)).^2/4/a.^2+ (y-c(2)).^2/4/b.^2));
 
 ifplot = 0;
 n = 16;
@@ -51,7 +51,7 @@ end
 
 %%
 
-zk = 6*pi*Nx;
+zk = 6*pi*Ny;
 fprintf('Setting up kernels...\n')
 Sk = kernel('helm', 's', zk);
 Skp = kernel('helm', 'sprime', zk);
@@ -61,6 +61,7 @@ Dkp = kernel('helm', 'dprime', zk);
 
 %loop for self convergence
 fprintf('Doing self-convergence...\n')
+iter = cell(4,1);
 for iself=1:1
 
     
@@ -228,12 +229,12 @@ for iself=1:1
 
     tic
     y_test = afun(x_test);
-    toc
+    t_mv(iself) = toc;
 
     Nit = ceil(0.1*length(list_rect)*length(pinfo.r(1,:)));
     Nit = 4000;
     tic
-    uout_pxy_gmres = gmres(afun, udata_pxy, [], eps_gmres, Nit);        
+    [uout_pxy_gmres, ~, relres, iter{iself}] = gmres(afun, udata_pxy, [], eps_gmres, Nit);        
     Time_dens(iself) = toc
     fprintf('Time to calculate densities=%d\n',Time_dens(iself))
 
