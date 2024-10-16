@@ -274,12 +274,12 @@ ylabel('\fontsize{15}{0}\selectfont $\varepsilon_{a}$', 'Interpreter','latex');
 legend([ss '$a =10$'], [ss '$a = 20$'], [ss '$a = 40$'], 'interpreter', 'latex', 'Location', 'SouthWest');
 
 set(gca, 'FontSize', 15)
-savefig(gcf, 'a_dep');
+savefig(gcf, 'a_lm_dep');
 fig = gcf;
 fig.PaperPositionMode = 'auto';
 fig_pos = fig.PaperPosition;
 fig.PaperSize = [fig_pos(3) fig_pos(4)];
-saveas(fig, 'a_dep', 'pdf')
+saveas(fig, 'a_lm_dep', 'pdf')
 
 
 

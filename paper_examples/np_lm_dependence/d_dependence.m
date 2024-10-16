@@ -8,9 +8,6 @@ clc
 
 dsep = 1;
 
-
-
-
 cparams = [];
 cparams.eps = 1.0e-10;
 cparams.nover = 1;
@@ -274,12 +271,12 @@ ylabel('\fontsize{15}{0}\selectfont $\varepsilon_{a}$', 'Interpreter','latex');
 legend([ss '$d =0.5$'], [ss '$d = 0.75$'], [ss '$d = 1$'], 'interpreter', 'latex', 'Location', 'SouthWest');
 
 set(gca, 'FontSize', 15)
-savefig(gcf, 'd_dep');
+savefig(gcf, 'd_lm_dep');
 fig = gcf;
 fig.PaperPositionMode = 'auto';
 fig_pos = fig.PaperPosition;
 fig.PaperSize = [fig_pos(3) fig_pos(4)];
-saveas(fig, 'd_dep', 'pdf')
+saveas(fig, 'd_lm_dep', 'pdf')
 
 
 
